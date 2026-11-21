@@ -78,7 +78,7 @@ public final class VencordUpdaterDialog {
             if (hash == null || hash.isEmpty()) continue;
             var index = raw.indexOf(hash);
             while (index >= 0) {
-                spannable.setSpan(new URLSpan(Constants.COMMIT_URL + hash), index, index + hash.length(),
+                spannable.setSpan(new URLSpan(Constants.BUILD_URL), index, index + hash.length(),
                         Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 index = raw.indexOf(hash, index + hash.length());
             }
