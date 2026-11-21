@@ -51,7 +51,25 @@
         });
     });
 
+    const pendingHttpRequests = new Map();
+    let nextHttpRequestId = 0;
+
     window.VencordMobile = {
+        // sends an https request from the app instead of the webview, so cors does not apply.
+        // resolves to { status, data }, where status is -1 if the request could not be completed
+        nativeFetch(url, { method = "GET", headers = {}, body = "" } = {}) {
+            return new Promise(resolve => {
+                const id = String(nextHttpRequestId++);
+                pendingHttpRequests.set(id, resolve);
+                VendroidNative.httpRequest(id, method, url, JSON.stringify(headers), body);
+            });
+        },
+
+        onNativeHttpResponse(id, response) {
+            pendingHttpRequests.get(id)?.(response);
+            pendingHttpRequests.delete(id);
+        },
+
         // returns true if an action was taken, false if the java side should handle the back press
         onBackPress() {
             // false means modal closed (no further action rewuired?)
